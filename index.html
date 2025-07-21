@@ -124,14 +124,11 @@
         canvas.style.height = height + "px";
       }
 
-      // 💡 Force Unity to update resolution in case it misses the change
-      if (typeof unityInstance !== "undefined" && unityInstance.Module) {
-        if (unityInstance.Module.setCanvasSize) {
-          unityInstance.Module.setCanvasSize(width, height);
-        } else if (unityInstance.Module.setCanvasDimensions) {
-          unityInstance.Module.setCanvasDimensions(width, height);
-        }
-      }
+// ✅ Force Unity to re-calculate its internal size
+if (typeof unityInstance !== "undefined") {
+  window.dispatchEvent(new Event("resize")); // Unity listens to this internally
+}
+
     }
 
 
