@@ -1,6 +1,14 @@
 <!DOCTYPE html>
 <html lang="en-us">
 <head>
+  <link rel="manifest" href="/manifest.json">
+  <link rel="apple-touch-icon" href="/icons/card10.png">
+  <meta name="theme-color" content="#231F20">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="mobile-web-app-capable" content="yes">
+
+
   <meta charset="utf-8">
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
   <title>Unity Web Player | balatro-feel</title>
@@ -144,6 +152,9 @@
 
     window.addEventListener("load", () => {
       resizeCanvasAndCheckOrientation();
+        if (/iPhone|iPad/.test(navigator.userAgent) && !window.navigator.standalone) {
+          alert("Tip: Tap the Share icon → 'Add to Home Screen' to install this app.");
+        }
 
       createUnityInstance(document.querySelector("#unity-canvas"), {
         dataUrl: "Build/Build.data",
