@@ -120,9 +120,20 @@
 
         canvas.width = width;
         canvas.height = height;
+        canvas.style.width = width + "px";
         canvas.style.height = height + "px";
       }
+
+      // 💡 Force Unity to update resolution in case it misses the change
+      if (typeof unityInstance !== "undefined" && unityInstance.Module) {
+        if (unityInstance.Module.setCanvasSize) {
+          unityInstance.Module.setCanvasSize(width, height);
+        } else if (unityInstance.Module.setCanvasDimensions) {
+          unityInstance.Module.setCanvasDimensions(width, height);
+        }
+      }
     }
+
 
     function requestFullscreen() {
       const canvas = document.getElementById("unity-canvas");
@@ -161,11 +172,13 @@
     });
 
 
+    let unityInstance;
+
     window.addEventListener("load", () => {
       resizeCanvasAndCheckOrientation();
-        if (/iPhone|iPad/.test(navigator.userAgent) && !window.navigator.standalone) {
-          alert("Tip: Tap the Share icon → 'Add to Home Screen' to install this app.");
-        }
+      if (/iPhone|iPad/.test(navigator.userAgent) && !window.navigator.standalone) {
+        alert("Tip: Tap the Share icon → 'Add to Home Screen' to install this app.");
+      }
 
       createUnityInstance(document.querySelector("#unity-canvas"), {
         dataUrl: "Build/Build.data",
@@ -176,8 +189,11 @@
         productName: "balatro-feel",
         productVersion: "1.0",
         matchWebGLToCanvasSize: true,
+      }).then(instance => {
+        unityInstance = instance;
       });
     });
+
 
     document.getElementById("tap-overlay").addEventListener("click", requestFullscreen);
     document.getElementById("unity-canvas").addEventListener("click", requestFullscreen);
