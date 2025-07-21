@@ -146,9 +146,20 @@
     }
 
     window.addEventListener("resize", resizeCanvasAndCheckOrientation);
+    
     window.addEventListener("orientationchange", () => {
-      setTimeout(resizeCanvasAndCheckOrientation, 100); // delay allows browser to settle layout
+      let attempts = 0;
+      const maxAttempts = 10;
+
+      const interval = setInterval(() => {
+        resizeCanvasAndCheckOrientation();
+        attempts++;
+        if (attempts >= maxAttempts) {
+          clearInterval(interval);
+        }
+      }, 150); // every 150ms
     });
+
 
     window.addEventListener("load", () => {
       resizeCanvasAndCheckOrientation();
