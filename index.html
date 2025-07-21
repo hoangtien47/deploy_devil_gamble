@@ -137,6 +137,12 @@
       const canvas = document.getElementById("unity-canvas");
       const overlay = document.getElementById("tap-overlay");
 
+      if (!isMobileDevice()) {
+        // 🔒 Desktop: do not enter fullscreen
+        overlay.classList.add("hidden");
+        return;
+      }
+
       if (
         !document.fullscreenElement &&
         !document.webkitFullscreenElement &&
@@ -149,7 +155,7 @@
 
         if (fullscreenPromise && typeof fullscreenPromise.then === "function") {
           fullscreenPromise.then(() => {
-            if (isMobileDevice() && screen.orientation?.lock) {
+            if (screen.orientation?.lock) {
               screen.orientation.lock("landscape").catch((err) => {
                 console.warn("Orientation lock failed:", err);
               });
@@ -160,6 +166,7 @@
 
       overlay.classList.add("hidden");
     }
+
 
     window.addEventListener("resize", resizeCanvasAndCheckOrientation);
 
