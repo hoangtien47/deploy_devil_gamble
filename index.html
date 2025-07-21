@@ -139,7 +139,7 @@
 
     window.addEventListener("resize", resizeCanvasAndCheckOrientation);
     window.addEventListener("orientationchange", () => {
-      setTimeout(resizeCanvasAndCheckOrientation, 300); // delay allows browser to settle layout
+      setTimeout(resizeCanvasAndCheckOrientation, 100); // delay allows browser to settle layout
     });
 
     window.addEventListener("load", () => {
