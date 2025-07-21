@@ -23,7 +23,7 @@
     #unity-canvas {
       background: #231F20;
       width: 100%;
-      height: 100dvh;
+      height: 100vh;
       display: block;
     }
     #orientation-warning {
@@ -37,7 +37,6 @@
       background: #231F20;
       color: white;
       font-size: 24px;
-      display: flex;
       align-items: center;
       justify-content: center;
       text-align: center;
@@ -91,23 +90,28 @@
       const height = window.visualViewport ? window.visualViewport.height : window.innerHeight;
       const isPortrait = height > width;
 
+      // Always show canvas and resize it
+      canvas.style.display = "block";
+      canvas.width = width;
+      canvas.height = height;
+      canvas.style.width = width + "px";
+      canvas.style.height = height + "px";
+
+      // Only show orientation warning on mobile portrait, but don't hide canvas
       if (isMobile() && isPortrait) {
         warning.style.display = "flex";
-        canvas.style.display = "none";
-        overlay.style.display = "none";
       } else {
         warning.style.display = "none";
-        canvas.style.display = "block";
-        overlay.style.display = document.fullscreenElement ? "none" : "flex";
-
-        canvas.width = width;
-        canvas.height = height;
-        canvas.style.width = width + "px";
-        canvas.style.height = height + "px";
-
-        // Force Unity to resize
-        window.dispatchEvent(new Event('resize'));
       }
+
+      // Handle overlay visibility
+      overlay.style.display = document.fullscreenElement ? "none" : "flex";
+
+      // Notify Unity of the resize
+      if (unityInstance) {
+        unityInstance.SendMessage('Canvas', 'OnCanvasResize', width + ',' + height);
+      }
+      window.dispatchEvent(new Event('resize'));
     }
 
     function requestFullscreen() {
@@ -131,16 +135,20 @@
       overlay.classList.add("hidden");
     }
 
-    window.addEventListener("resize", resizeCanvasAndCheckOrientation);
+    window.addEventListener("resize", () => {
+      setTimeout(resizeCanvasAndCheckOrientation, 100);
+    });
 
     window.addEventListener("orientationchange", () => {
-      let attempts = 0;
-      const maxAttempts = 10;
-      const interval = setInterval(() => {
-        resizeCanvasAndCheckOrientation();
-        attempts++;
-        if (attempts >= maxAttempts) clearInterval(interval);
-      }, 150);
+      setTimeout(() => {
+        let attempts = 0;
+        const maxAttempts = 10;
+        const interval = setInterval(() => {
+          resizeCanvasAndCheckOrientation();
+          attempts++;
+          if (attempts >= maxAttempts) clearInterval(interval);
+        }, 150);
+      }, 500);
     });
 
     window.addEventListener("load", () => {
@@ -161,6 +169,7 @@
         matchWebGLToCanvasSize: true,
       }).then(instance => {
         unityInstance = instance;
+        resizeCanvasAndCheckOrientation();
       });
     });
 
