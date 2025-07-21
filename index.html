@@ -124,12 +124,21 @@
         canvas.style.height = height + "px";
       }
 
-      if (typeof unityInstance !== "undefined") {
+      if (typeof unityInstance !== "undefined" && unityInstance.Module) {
         setTimeout(() => {
-          // Unity responds to this like a signal to recalculate canvas size
+          const canvas = document.getElementById("unity-canvas");
+          const width = canvas.clientWidth;
+          const height = canvas.clientHeight;
+
+          if (unityInstance.Module.setCanvasSize) {
+            unityInstance.Module.setCanvasSize(width, height);
+          }
+
+          // Force a WebGL context resize in case Unity missed it
           window.dispatchEvent(new Event("resize"));
-        }, 50); // delay ensures orientation layout stabilizes
+        }, 300); // wait longer for viewport to settle
       }
+
 
     }
 
