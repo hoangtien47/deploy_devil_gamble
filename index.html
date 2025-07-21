@@ -91,17 +91,23 @@
       const height = window.visualViewport ? window.visualViewport.height : window.innerHeight;
       const isPortrait = height > width;
 
-      // --- MODIFICATION START ---
-      // Always display and resize the canvas regardless of orientation.
-      warning.style.display = (isMobile() && isPortrait) ? "flex" : "none";
-      canvas.style.display = "block";
-      overlay.style.display = document.fullscreenElement ? "none" : "flex";
+      if (isMobile() && isPortrait) {
+        warning.style.display = "flex";
+        canvas.style.display = "none";
+        overlay.style.display = "none";
+      } else {
+        warning.style.display = "none";
+        canvas.style.display = "block";
+        overlay.style.display = document.fullscreenElement ? "none" : "flex";
 
-      canvas.width = width;
-      canvas.height = height;
-      canvas.style.width = width + "px";
-      canvas.style.height = height + "px";
-      // --- MODIFICATION END ---
+        canvas.width = width;
+        canvas.height = height;
+        canvas.style.width = width + "px";
+        canvas.style.height = height + "px";
+
+        // Force Unity to resize
+        window.dispatchEvent(new Event('resize'));
+      }
     }
 
     function requestFullscreen() {
@@ -113,13 +119,6 @@
         !document.webkitFullscreenElement &&
         !document.msFullscreenElement
       ) {
-        // --- MODIFICATION START ---
-        // Try to lock orientation to landscape for a better fullscreen experience
-        if (screen.orientation && screen.orientation.lock) {
-          screen.orientation.lock("landscape").catch(() => {});
-        }
-        // --- MODIFICATION END ---
-
         if (canvas.requestFullscreen) {
           canvas.requestFullscreen();
         } else if (canvas.webkitRequestFullscreen) {
