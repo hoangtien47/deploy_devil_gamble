@@ -172,13 +172,11 @@
     });
 
 
-    let unityInstance;
-
     window.addEventListener("load", () => {
       resizeCanvasAndCheckOrientation();
-      if (/iPhone|iPad/.test(navigator.userAgent) && !window.navigator.standalone) {
-        alert("Tip: Tap the Share icon → 'Add to Home Screen' to install this app.");
-      }
+        if (/iPhone|iPad/.test(navigator.userAgent) && !window.navigator.standalone) {
+          alert("Tip: Tap the Share icon → 'Add to Home Screen' to install this app.");
+        }
 
       createUnityInstance(document.querySelector("#unity-canvas"), {
         dataUrl: "Build/Build.data",
@@ -189,11 +187,8 @@
         productName: "balatro-feel",
         productVersion: "1.0",
         matchWebGLToCanvasSize: true,
-      }).then(instance => {
-        unityInstance = instance;
       });
     });
-
 
     document.getElementById("tap-overlay").addEventListener("click", requestFullscreen);
     document.getElementById("unity-canvas").addEventListener("click", requestFullscreen);
