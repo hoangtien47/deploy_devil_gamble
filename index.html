@@ -124,10 +124,12 @@
         canvas.style.height = height + "px";
       }
 
-// ✅ Force Unity to re-calculate its internal size
-if (typeof unityInstance !== "undefined") {
-  window.dispatchEvent(new Event("resize")); // Unity listens to this internally
-}
+      if (typeof unityInstance !== "undefined") {
+        setTimeout(() => {
+          // Unity responds to this like a signal to recalculate canvas size
+          window.dispatchEvent(new Event("resize"));
+        }, 50); // delay ensures orientation layout stabilizes
+      }
 
     }
 
@@ -155,18 +157,23 @@ if (typeof unityInstance !== "undefined") {
 
     window.addEventListener("resize", resizeCanvasAndCheckOrientation);
     
+    let orientationFixInterval = null;
+
     window.addEventListener("orientationchange", () => {
+      if (orientationFixInterval) clearInterval(orientationFixInterval);
+
       let attempts = 0;
       const maxAttempts = 10;
 
-      const interval = setInterval(() => {
+      orientationFixInterval = setInterval(() => {
         resizeCanvasAndCheckOrientation();
         attempts++;
         if (attempts >= maxAttempts) {
-          clearInterval(interval);
+          clearInterval(orientationFixInterval);
         }
-      }, 150); // every 150ms
+      }, 200);
     });
+
 
 
     window.addEventListener("load", () => {
