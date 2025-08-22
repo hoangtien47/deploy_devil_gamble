@@ -5,7 +5,7 @@
   "display": "standalone",
   "background_color": "#231F20",
   "theme_color": "#231F20",
-  "orientation": "landscape",
+  "orientation": "landscape-primary",
   "icons": [
     {
       "src": "/icons/card10.png",
